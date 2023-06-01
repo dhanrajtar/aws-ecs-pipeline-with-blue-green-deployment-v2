@@ -2,22 +2,21 @@ version: 0.2
 
 env:
   variables:
-    AWS_REGION: us-east-1 # checkfor specific region
+    AWS_REGION: us-east-1 # check for specific region
     AWS_ACCOUNT_ID: 919321388667
     IMAGE_NAME: bluegreen-deploy-ecs
     
 phases:
   install:
     runtime-versions:
-      nodejs: 12  
+      nodejs: 18
     commands:
-      # - echo Installing Mocha...
-      # - npm install -g mocha (test)
+      - echo Installing Mocha...
+      - npm install -g mocha (test)
   pre_build:
     commands:
-      - echo  Installing   source NPM dependencies...
+      - echo  Installing source NPM dependencies...
       - npm install
-      # - npm install  unit.js
       - echo Setting up docker
       - nohup /usr/local/bin/dockerd --host=unix:///var/run/docker.sock --host=tcp://127.0.0.1:2375 --storage-driver=overlay2 &
       - timeout 15 sh -c "until docker info; do echo .; sleep 1; done"
@@ -28,7 +27,7 @@ phases:
     commands:
       - echo Build started on `date`
       - echo Compiling the Node.js code
-      # - mocha test.js
+      - mocha test.js
   post_build:
     commands:
       - docker image build -t $IMAGE_NAME .
@@ -40,6 +39,7 @@ phases:
       - printf '{"ImageURI":"'"$AWS_ACCOUNT_ID"'.dkr.ecr.'"$AWS_REGION"'.amazonaws.com/'"$IMAGE_NAME"':latest"}' > imageDetail.json
       - cat imageDetail.json
       - echo Build completed on `date`
+      
 artifacts:
   files: 
     - 'image*.json'
@@ -53,3 +53,4 @@ artifacts:
     ImageArtifact:
       files:
         - imageDetail.json
+
