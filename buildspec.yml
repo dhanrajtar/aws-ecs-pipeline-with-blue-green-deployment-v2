@@ -12,7 +12,7 @@ phases:
       nodejs: 18
     commands:
       - echo Installing Mocha...
-      - npm install -g mocha (test)
+      - npm install -g mocha # Install Mocha globally
   pre_build:
     commands:
       - echo  Installing source NPM dependencies...
