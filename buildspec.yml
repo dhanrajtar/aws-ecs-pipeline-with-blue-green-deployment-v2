@@ -12,12 +12,12 @@ phases:
       nodejs: 18
     commands:
       - echo Installing Mocha...
-      - npm install -g mocha # Install Mocha globally
+      - npm install -g mocha
   pre_build:
     commands:
-      - echo  Installing source NPM dependencies...
+      - echo Installing source NPM dependencies...
       - npm install
-      - echo Setting up docker
+      - echo Setting up Docker
       - nohup /usr/local/bin/dockerd --host=unix:///var/run/docker.sock --host=tcp://127.0.0.1:2375 --storage-driver=overlay2 &
       - timeout 15 sh -c "until docker info; do echo .; sleep 1; done"
       - echo Logging in to Amazon ECR...
@@ -32,8 +32,8 @@ phases:
     commands:
       - docker image build -t $IMAGE_NAME .
       - docker image tag $IMAGE_NAME:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$IMAGE_NAME:latest
-      - echo image name =  $IMAGE_NAME:latest
-      - echo image url = $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$IMAGE_NAME:latest
+      - echo Image name: $IMAGE_NAME:latest
+      - echo Image URL: $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$IMAGE_NAME:latest
       - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$IMAGE_NAME:latest
       - echo Writing image definitions file...
       - printf '{"ImageURI":"'"$AWS_ACCOUNT_ID"'.dkr.ecr.'"$AWS_REGION"'.amazonaws.com/'"$IMAGE_NAME"':latest"}' > imageDetail.json
